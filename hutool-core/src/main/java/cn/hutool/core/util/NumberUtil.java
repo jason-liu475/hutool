@@ -410,9 +410,7 @@ public class NumberUtil {
 		BigDecimal result = new BigDecimal(null == value ? "0" : value.toString());
 		for (int i = 1; i < values.length; i++) {
 			value = values[i];
-			if (null != value) {
-				result = result.multiply(new BigDecimal(value.toString()));
-			}
+			result = result.multiply(new BigDecimal(null == value ? "0" : value.toString()));
 		}
 		return result;
 	}
@@ -754,6 +752,18 @@ public class NumberUtil {
 		return v1.divide(v2, scale, roundingMode);
 	}
 
+	/**
+	 * 补充Math.ceilDiv() JDK8中添加了和Math.floorDiv()但却没有ceilDiv()
+	 *
+	 * @param v1           被除数
+	 * @param v2           除数
+	 * @return 两个参数的商
+	 * @since 5.3.3
+	 */
+	public static int ceilDiv(int v1, int v2) {
+		return (int)Math.ceil((double)v1 / v2);
+	}
+
 	// ------------------------------------------------------------------------------------------- round
 
 	/**
@@ -1020,6 +1030,29 @@ public class NumberUtil {
 	 * @since 3.0.5
 	 */
 	public static String decimalFormat(String pattern, long value) {
+		return new DecimalFormat(pattern).format(value);
+	}
+
+	/**
+	 * 格式化double<br>
+	 * 对 {@link DecimalFormat} 做封装<br>
+	 *
+	 * @param pattern 格式 格式中主要以 # 和 0 两种占位符号来指定数字长度。0 表示如果位数不足则以 0 填充，# 表示只要有可能就把数字拉上这个位置。<br>
+	 *                <ul>
+	 *                <li>0 =》 取一位整数</li>
+	 *                <li>0.00 =》 取一位整数和两位小数</li>
+	 *                <li>00.000 =》 取两位整数和三位小数</li>
+	 *                <li># =》 取所有整数部分</li>
+	 *                <li>#.##% =》 以百分比方式计数，并取两位小数</li>
+	 *                <li>#.#####E0 =》 显示为科学计数法，并取五位小数</li>
+	 *                <li>,### =》 每三位以逗号进行分隔，例如：299,792,458</li>
+	 *                <li>光速大小为每秒,###米 =》 将格式嵌入文本</li>
+	 *                </ul>
+	 * @param value   值，支持BigDecimal、BigInteger、Number等类型
+	 * @return 格式化后的值
+	 * @since 5.1.6
+	 */
+	public static String decimalFormat(String pattern, Object value) {
 		return new DecimalFormat(pattern).format(value);
 	}
 
@@ -2081,7 +2114,7 @@ public class NumberUtil {
 	 */
 	public static int partValue(int total, int partCount, boolean isPlusOneWhenHasRem) {
 		int partValue = total / partCount;
-		if (isPlusOneWhenHasRem && total % partCount == 0) {
+		if (isPlusOneWhenHasRem && total % partCount > 0) {
 			partValue++;
 		}
 		return partValue;

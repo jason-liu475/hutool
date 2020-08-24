@@ -21,12 +21,6 @@ public class StrUtilTest {
 	}
 	
 	@Test
-	public void isBlankTest2() {
-		String blank = "\u202a";
-		Assert.assertTrue(StrUtil.isBlank(blank));
-	}
-
-	@Test
 	public void trimTest() {
 		String blank = "	 哈哈 　";
 		String trim = StrUtil.trim(blank);
@@ -346,6 +340,9 @@ public class StrUtilTest {
 		String str1 = "TableTestOfDay";
 		String result1 = StrUtil.toCamelCase(str1);
 		Assert.assertEquals("TableTestOfDay", result1);
+
+		String abc1d = StrUtil.toCamelCase("abc_1d");
+		Assert.assertEquals("abc1d", abc1d);
 	}
 	
 	@Test
@@ -421,5 +418,44 @@ public class StrUtilTest {
 		Assert.assertEquals("1AB", StrUtil.padAfter("1", 3, "ABC"));
 		Assert.assertEquals("23", StrUtil.padAfter("123", 2, "ABC"));
 	}
-	
+
+	@Test
+	public void subBetweenAllTest() {
+		Assert.assertArrayEquals(new String[]{"yz","abc"},StrUtil.subBetweenAll("saho[yz]fdsadp[abc]a","[","]"));
+		Assert.assertArrayEquals(new String[]{"abc"}, StrUtil.subBetweenAll("saho[yzfdsadp[abc]a]","[","]"));
+		Assert.assertArrayEquals(new String[]{"abc", "abc"}, StrUtil.subBetweenAll("yabczyabcz","y","z"));
+		Assert.assertArrayEquals(new String[0], StrUtil.subBetweenAll(null,"y","z"));
+		Assert.assertArrayEquals(new String[0], StrUtil.subBetweenAll("","y","z"));
+		Assert.assertArrayEquals(new String[0], StrUtil.subBetweenAll("abc",null,"z"));
+		Assert.assertArrayEquals(new String[0], StrUtil.subBetweenAll("abc","y",null));
+	}
+
+	@Test
+	public void subBetweenAllTest2() {
+		//issue#861@Github，起始不匹配的时候，应该直接空
+		String src1 = "/* \n* hutool  */  asdas  /* \n* hutool  */";
+		String src2 = "/ * hutool  */  asdas  / * hutool  */";
+
+		String[] results1 = StrUtil.subBetweenAll(src1,"/**","*/");
+		Assert.assertEquals(0, results1.length);
+
+		String[] results2 = StrUtil.subBetweenAll(src2,"/*","*/");
+		Assert.assertEquals(0, results2.length);
+	}
+
+	@Test
+	public void briefTest(){
+		String str = RandomUtil.randomString(1000);
+		int maxLength = RandomUtil.randomInt(1000);
+		String brief = StrUtil.brief(str, maxLength);
+		Assert.assertEquals(brief.length(), maxLength);
+	}
+
+	@Test
+	public void filterTest() {
+		final String filterNumber = StrUtil.filter("hutool678", CharUtil::isNumber);
+		Assert.assertEquals("678", filterNumber);
+		String cleanBlank = StrUtil.filter("	 你 好　", c -> !CharUtil.isBlankChar(c));
+		Assert.assertEquals("你好", cleanBlank);
+	}
 }

@@ -4,6 +4,7 @@ import cn.hutool.core.convert.AbstractConverter;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * JDK8中新加入的java.time包对象解析转换器<br>
@@ -38,7 +40,7 @@ import java.util.Date;
 public class TemporalAccessorConverter extends AbstractConverter<TemporalAccessor> {
 	private static final long serialVersionUID = 1L;
 
-	private Class<?> targetType;
+	private final Class<?> targetType;
 	/**
 	 * 日期格式化
 	 */
@@ -50,7 +52,7 @@ public class TemporalAccessorConverter extends AbstractConverter<TemporalAccesso
 	 * @param targetType 目标类型
 	 */
 	public TemporalAccessorConverter(Class<?> targetType) {
-		this.targetType = targetType;
+		this(targetType, null);
 	}
 
 	/**
@@ -106,6 +108,10 @@ public class TemporalAccessorConverter extends AbstractConverter<TemporalAccesso
 	 * @return 日期对象
 	 */
 	private TemporalAccessor parseFromCharSequence(CharSequence value) {
+		if(StrUtil.isBlank(value)){
+			return null;
+		}
+
 		final Instant instant;
 		ZoneId zoneId;
 		if (null != this.format) {
@@ -114,7 +120,7 @@ public class TemporalAccessorConverter extends AbstractConverter<TemporalAccesso
 			zoneId = formatter.getZone();
 		} else {
 			final DateTime dateTime = DateUtil.parse(value);
-			instant = dateTime.toInstant();
+			instant = Objects.requireNonNull(dateTime).toInstant();
 			zoneId = dateTime.getZoneId();
 		}
 		return parseFromInstant(instant, zoneId);

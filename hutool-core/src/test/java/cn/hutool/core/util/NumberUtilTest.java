@@ -1,10 +1,10 @@
 package cn.hutool.core.util;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * {@link NumberUtil} 单元测试类
@@ -245,5 +245,11 @@ public class NumberUtilTest {
 		Assert.assertEquals(120, factorial);
 		factorial = NumberUtil.factorial(5, 1);
 		Assert.assertEquals(120, factorial);
+	}
+
+	@Test
+	public void mulTest(){
+		final BigDecimal mul = NumberUtil.mul(new BigDecimal("10"), null);
+		Assert.assertEquals(BigDecimal.ZERO, mul);
 	}
 }

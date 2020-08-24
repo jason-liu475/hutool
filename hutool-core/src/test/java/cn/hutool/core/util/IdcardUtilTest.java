@@ -24,7 +24,16 @@ public class IdcardUtilTest {
 		boolean valid15 = IdcardUtil.isValidCard(ID_15);
 		Assert.assertTrue(valid15);
 
+		// 无效
 		String idCard = "360198910283844";
+		Assert.assertFalse(IdcardUtil.isValidCard(idCard));
+
+		// 生日无效
+		idCard = "201511221897205960";
+		Assert.assertFalse(IdcardUtil.isValidCard(idCard));
+
+		// 生日无效
+		idCard = "815727834224151";
 		Assert.assertFalse(IdcardUtil.isValidCard(idCard));
 	}
 
@@ -78,4 +87,10 @@ public class IdcardUtilTest {
 		Assert.assertFalse(isValidCard18);
 	}
 
+	@Test
+	public void isValidHKCardIdTest(){
+		String hkCard="P174468(6)";
+		boolean flag=IdcardUtil.isValidHKCard(hkCard);
+		Assert.assertTrue(flag);
+	}
 }
