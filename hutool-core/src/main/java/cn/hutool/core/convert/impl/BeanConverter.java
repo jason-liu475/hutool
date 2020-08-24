@@ -5,7 +5,9 @@ import cn.hutool.core.bean.copier.BeanCopier;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.bean.copier.ValueProvider;
 import cn.hutool.core.convert.AbstractConverter;
+import cn.hutool.core.convert.ConvertException;
 import cn.hutool.core.map.MapProxy;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.TypeUtil;
 
@@ -64,7 +66,9 @@ public class BeanConverter<T> extends AbstractConverter<T> {
 
 	@Override
 	protected T convertInternal(Object value) {
-		if(value instanceof Map || value instanceof ValueProvider || BeanUtil.isBean(value.getClass())) {
+		if(value instanceof Map ||
+				value instanceof ValueProvider ||
+				BeanUtil.isBean(value.getClass())) {
 			if(value instanceof Map && this.beanClass.isInterface()) {
 				// 将Map动态代理为Bean
 				return MapProxy.create((Map<?, ?>)value).toProxyBean(this.beanClass);
@@ -72,8 +76,12 @@ public class BeanConverter<T> extends AbstractConverter<T> {
 
 			//限定被转换对象类型
 			return BeanCopier.create(value, ReflectUtil.newInstanceIfPossible(this.beanClass), this.beanType, this.copyOptions).copy();
+		} else if(value instanceof byte[]){
+			// 尝试反序列化
+			return ObjectUtil.deserialize((byte[])value);
 		}
-		return null;
+
+		throw new ConvertException("Unsupported source type: {}", value.getClass());
 	}
 
 	@Override

@@ -1,11 +1,10 @@
 package cn.hutool.core.date;
 
+import cn.hutool.core.lang.Assert;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
-
-import cn.hutool.core.lang.Assert;
-import cn.hutool.core.lang.Console;
 
 /**
  * 日期间隔
@@ -17,9 +16,9 @@ public class DateBetween implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	/** 开始日期 */
-	private Date begin;
+	private final Date begin;
 	/** 结束日期 */
-	private Date end;
+	private final Date end;
 
 	/**
 	 * 创建<br>
@@ -166,6 +165,6 @@ public class DateBetween implements Serializable{
 
 	@Override
 	public String toString() {
-		return toString(BetweenFormater.Level.MILLSECOND);
+		return toString(BetweenFormater.Level.MILLISECOND);
 	}
 }
